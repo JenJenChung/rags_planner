@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <ros/console.h>
 #include <stdio.h>
 #include <dji_sdk/dji_drone.h>
 #include <cstdlib>
@@ -18,7 +19,7 @@ void waypointCallback(const dji_sdk::Waypoint& msg, DJIDrone * drone){
 int main(int argc, char **argv)
 {
   ros::init(argc, argv, "dji_drone_client");
-  ROS_INFO("Initialising DJI drone client");
+  ROS_INFO_STREAM("Initialising DJI drone client");
   ros::NodeHandle nh;
   DJIDrone* drone = new DJIDrone(nh);
   

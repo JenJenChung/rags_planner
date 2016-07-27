@@ -1,8 +1,8 @@
 #include <ros/ros.h>
-#include <move_base_msgs/MoveBaseActionResult.h>
-#include "sensor_msgs/LaserScan.h" // Check what the incoming message type is
 #include <ros/console.h>
-#include "dji_sdk/DJI_Waypoint.h" // DJI waypoint message type
+#include "sensor_msgs/LaserScan.h" // Check what the incoming message type is
+#include "dji_sdk/dji_drone.h" // All DJI message types etc. included in here
+#include <actionlib/client/simple_action_client.h>
 
 #include <iostream>
 #include <fstream>
@@ -49,10 +49,9 @@ class RAGS
     ros::Subscriber subSensor ;
     ros::Publisher pubWaypoint ;
     bool fWaypoint ;
-    move_base_msgs::MoveBaseActionResult result ;
     dji_sdk::Waypoint waypoint ;
     
-    void waypointCallback(const move_base_msgs::MoveBaseActionResult&) ;
+    void waypointStatusCallback(const dji_sdk::MissionPushInfo&) ;
     void sensorCallback(const some_msg_type&) ;
     
     vector <Node *> SGPaths ; // non-dominated path set as node link list from start to goal
@@ -63,7 +62,7 @@ class RAGS
 };
 
 RAGS::RAGS(ros::NodeHandle nh){
-  subResult = nh.subscribe("move_base/result", 10, &RAGS::waypointCallback, this) ;
+  subResult = nh.subscribe("dji_sdk/mission_status", 10, &RAGS::waypointStatusCallback, this) ;
   subSensor = nh.subscribe("base_scan", 10, &RAGS::sensorCallback, this) ;
   pubWaypoint = nh.advertise<dji_sdk::Waypoint>("cmd_wp", 10) ;
   fWaypoint = false ;
@@ -158,42 +157,44 @@ RAGS::RAGS(ros::NodeHandle nh){
 	}
 }
 
-void RAGS::waypointCallback(const move_base_msgs::MoveBaseActionResult& msg){
-  newNodes = cmdWaypoint->GetNodes() ;
-  
-  // Identify next vertices
-	for (int i = 0; i < newNodes.size(); i++)
-	{
-		bool newVert = true ;
-		for (int j = 0; j < nextVerts.size(); j++)
-		{
-			if ((nextVerts[j]->GetX() == newNodes[i]->GetParent()->GetVertex()->GetX() &&
-				nextVerts[j]->GetY() == newNodes[i]->GetParent()->GetVertex()->GetY()) ||
-				(nextVerts[j]->GetX() == curLoc->GetX() && nextVerts[j]->GetY() == curLoc->GetY()))
-			{
-				newVert = false ;
-				break ;
-			}
-		}
-		if (newVert)
-			nextVerts.push_back(newNodes[i]->GetParent()->GetVertex()) ;
-	}
+void RAGS::waypointStatusCallback(const dji_sdk::MissionPushInfo& msg){
+  if (msg.data_2 == 0){ // Success status message received
+    newNodes = cmdWaypoint->GetNodes() ;
+    
+    // Identify next vertices
+	  for (int i = 0; i < newNodes.size(); i++)
+	  {
+		  bool newVert = true ;
+		  for (int j = 0; j < nextVerts.size(); j++)
+		  {
+			  if ((nextVerts[j]->GetX() == newNodes[i]->GetParent()->GetVertex()->GetX() &&
+				  nextVerts[j]->GetY() == newNodes[i]->GetParent()->GetVertex()->GetY()) ||
+				  (nextVerts[j]->GetX() == curLoc->GetX() && nextVerts[j]->GetY() == curLoc->GetY()))
+			  {
+				  newVert = false ;
+				  break ;
+			  }
+		  }
+		  if (newVert)
+			  nextVerts.push_back(newNodes[i]->GetParent()->GetVertex()) ;
+	  }
 	
-	// Identify next vertex path nodes
-  vector <Node *> tmpNodes ; // temporarily store next nodes
-	for (int i = 0; i < nextVerts.size(); i++)
-	{
-		tmpNodes.clear() ;
-		for (int j = 0; j < newNodes.size(); j++)
-		{
-			if (nextVerts[i]->GetX() == newNodes[j]->GetParent()->GetVertex()->GetX() &&
-				nextVerts[i]->GetY() == newNodes[j]->GetParent()->GetVertex()->GetY())
-				tmpNodes.push_back(newNodes[j]->GetParent()) ;
-		}
-		nextVerts[i]->SetNodes(tmpNodes) ;
-	}
+	  // Identify next vertex path nodes
+    vector <Node *> tmpNodes ; // temporarily store next nodes
+	  for (int i = 0; i < nextVerts.size(); i++)
+	  {
+		  tmpNodes.clear() ;
+		  for (int j = 0; j < newNodes.size(); j++)
+		  {
+			  if (nextVerts[i]->GetX() == newNodes[j]->GetParent()->GetVertex()->GetX() &&
+				  nextVerts[i]->GetY() == newNodes[j]->GetParent()->GetVertex()->GetY())
+				  tmpNodes.push_back(newNodes[j]->GetParent()) ;
+		  }
+		  nextVerts[i]->SetNodes(tmpNodes) ;
+	  }
 	
-	fWaypoint = true ;
+	  fWaypoint = true ;
+	}
 }
 
 void RAGS::sensorCallback(const sensor_msgs::LaserScan& msg){
