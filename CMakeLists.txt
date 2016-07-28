@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   dji_sdk
 )
+find_package(OpenCV 3.1.0 REQUIRED)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
@@ -23,16 +24,12 @@ catkin_package(
 )
 
 include_directories(
-  ${OpenCV_INCLUDE_DIRS}
+#  ${OpenCV_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
 
-link_libraries(
-  ${OpenCV_LIBS}
-  ${catkin_LIBRARIES})
-
 add_executable(dji_rags src/dji_rags.cpp)
-target_link_libraries(dji_rags ${catkin_LIBRARIES})
+target_link_libraries(dji_rags ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(dji_rags dji_sdk_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
 
 add_executable(dji_drone_client src/dji_drone_client.cpp)
