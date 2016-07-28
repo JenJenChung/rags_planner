@@ -23,8 +23,13 @@ catkin_package(
 )
 
 include_directories(
+  ${OpenCV_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
+
+link_libraries(
+  ${OpenCV_LIBS}
+  ${catkin_LIBRARIES})
 
 add_executable(dji_rags src/dji_rags.cpp)
 target_link_libraries(dji_rags ${catkin_LIBRARIES})

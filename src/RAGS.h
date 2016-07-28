@@ -27,7 +27,7 @@
 #include "queue.h"
 #include "search.h"
 
-const double pi = 3.14159265358979323846264338328 ;
+#define PI 3.14159265358979323846264338328
 
 #include "util_functions.h"
 
@@ -80,7 +80,7 @@ RAGS::RAGS(ros::NodeHandle nh){
     int numVerts = 150 ; //int((x*y)/1000) ;
 	  cout << "Generating Random Vertices in " << x << " by " << y << endl;
 	  vertVec = makeVertices(x,y,numVerts);
-	  radius = sqrt((6.0/pi)*x*y*(log((double)numVerts)/(double)numVerts)) ;
+	  radius = sqrt((6.0/PI)*x*y*(log((double)numVerts)/(double)numVerts)) ;
 	  cout << "Connecting with radius " << radius << endl;
 	  Graph * testGraph = new Graph(vertVec, radius, img);
 	  Vertex * sourceSec = testGraph->GetVertices()[0] ; // top-left sector

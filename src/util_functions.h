@@ -93,7 +93,7 @@ bool ComputeImprovementProbability(Vertex * A, Vertex * B)
 		{
 			double mu_Ai = ANodes[i]->GetMeanCTG() ;
 			double sig_Ai = ANodes[i]->GetVarCTG() ;
-			double p_cA1 = (1/(sig_Ai*sqrt(2*pi)))*exp(-(pow(x[k]-mu_Ai,2))/(2*pow(sig_Ai,2))) ;
+			double p_cA1 = (1/(sig_Ai*sqrt(2*PI)))*exp(-(pow(x[k]-mu_Ai,2))/(2*pow(sig_Ai,2))) ;
 			double p_cA2 = 1.0 ;
 			for (int j = 0; j < ANodes.size(); j++)
 			{
