@@ -1,7 +1,4 @@
-#include <ros/ros.h>
-#include <ros/console.h>
 #include "sensor_msgs/LaserScan.h" // Check what the incoming message type is
-#include "dji_sdk/dji_drone.h" // All DJI message types etc. included in here
 #include <actionlib/client/simple_action_client.h>
 
 #include <iostream>
@@ -29,13 +26,10 @@
 #include "graph.h"
 #include "queue.h"
 #include "search.h"
-#include "util_functions.h"
-
-using namespace std ;
-
-typedef unsigned int UINT ;
 
 const double pi = 3.14159265358979323846264338328 ;
+
+#include "util_functions.h"
 
 
 class RAGS
@@ -52,7 +46,7 @@ class RAGS
     dji_sdk::Waypoint waypoint ;
     
     void waypointStatusCallback(const dji_sdk::MissionPushInfo&) ;
-    void sensorCallback(const some_msg_type&) ;
+    void sensorCallback(const sensor_msgs::LaserScan&) ;
     
     vector <Node *> SGPaths ; // non-dominated path set as node link list from start to goal
     vector <Node *> newNodes ; // set of available paths to goal
@@ -71,7 +65,7 @@ RAGS::RAGS(ros::NodeHandle nh){
   string temp ;
   ros::param::get("RAGS/satellite_image", temp) ;
   cv::Mat img = cv::imread(temp, 0);
-  vector< double > size;
+  vector< double > iSize;
   iSize.push_back(img.size().width-1);
   iSize.push_back(img.size().height-1);
   vector< vector< double > > vertVec;
@@ -169,7 +163,7 @@ void RAGS::waypointStatusCallback(const dji_sdk::MissionPushInfo& msg){
 		  {
 			  if ((nextVerts[j]->GetX() == newNodes[i]->GetParent()->GetVertex()->GetX() &&
 				  nextVerts[j]->GetY() == newNodes[i]->GetParent()->GetVertex()->GetY()) ||
-				  (nextVerts[j]->GetX() == curLoc->GetX() && nextVerts[j]->GetY() == curLoc->GetY()))
+				  (nextVerts[j]->GetX() == cmdWaypoint->GetX() && nextVerts[j]->GetY() == cmdWaypoint->GetY()))
 			  {
 				  newVert = false ;
 				  break ;

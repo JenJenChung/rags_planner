@@ -1,6 +1,51 @@
 #ifndef UTIL_FUNCTIONS_H_
 #define UTIL_FUNCTIONS_H_
 
+vector< vector< double > > makeVertices(double x, double y, int numVerts){
+	vector< vector< double > > vertices(numVerts, vector<double>(2));
+
+	srand (time(NULL));
+	double vertx, verty;
+	int xx = x;
+	int yy = y;
+	double testx, testy;
+
+	for(int i = 0; i < numVerts; i++){
+		if (i == 0)
+		{
+			vertices[i][0] = 0 ;
+			vertices[i][1] = 0 ;
+		}
+		else if (i == numVerts-1)
+		{
+			vertices[i][0] = x ;
+			vertices[i][1] = y ;
+		}
+		else
+		{
+			vertx = rand() % xx;
+			verty = rand() % yy;
+			vertices[i][0] = vertx ;
+			vertices[i][1] = verty ;
+		}
+	}
+
+	// Write vertices to txt file
+//	stringstream vFileName ;
+//	vFileName << "../results/vertices" << trialNum << ".txt" ;
+
+//	ofstream vertsFile ;
+//	vertsFile.open(vFileName.str().c_str()) ;
+
+//	for (ULONG i = 0; i < vertices.size(); i++)
+//	{
+//		vertsFile << vertices[i][0] << "," << vertices[i][1] << "\n" ;
+//	}
+//	vertsFile.close() ;
+
+	return vertices;
+}
+
 vector<double> linspace(double a, double b, int n)
 {
 	vector<double> array ;
@@ -72,6 +117,10 @@ bool ComputeImprovementProbability(Vertex * A, Vertex * B)
 	return (pImprove<=0.5);
 }
 
+double CalculateTrueEdgeCost(Vertex * v1, Vertex * v2, const sensor_msgs::LaserScan& msg){
+  double trueCost = 0.0 ;
+}
+
 void SetTrueEdgeCosts(Vertex * v1, vector<Vertex *> v2, const sensor_msgs::LaserScan& msg)
 {
 	// Set cost-to-come of v2 vertices as true cost of edge traversal
@@ -81,8 +130,5 @@ void SetTrueEdgeCosts(Vertex * v1, vector<Vertex *> v2, const sensor_msgs::Laser
 		v2[i]->SetCTC(trueCost) ;
 		break ;
 	}
-}
-
-double CalculateTrueEdgeCost(Vertex * v1, Vertex * v2, const sensor_msgs::LaserScan& msg){
 }
 #endif

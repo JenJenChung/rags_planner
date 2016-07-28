@@ -418,12 +418,12 @@ vector< vector<double> > Graph::RadiusConnect(vector< vector<double> > vertices,
 {
         int eVar = 2000.0;
         // Write Configuration
-        stringstream vFileName ;
-        vFileName << "../results/config" << trialNum << ".txt" ;
-        ofstream confFile ;
-        confFile.open(vFileName.str().c_str(), std::ios_base::app) ;
+//        stringstream vFileName ;
+//        vFileName << "../results/config" << trialNum << ".txt" ;
+//        ofstream confFile ;
+//        confFile.open(vFileName.str().c_str(), std::ios_base::app) ;
 
-        confFile << "Max Edge Var: " << eVar/100 << "\n";
+//        confFile << "Max Edge Var: " << eVar/100 << "\n";
 
 	srand(time(NULL));
 	vector< vector<double> > edges(pow(vertices.size(),2), vector<double>(4)) ;
@@ -449,18 +449,18 @@ vector< vector<double> > Graph::RadiusConnect(vector< vector<double> > vertices,
 	edges.resize(k) ;
 	
 	// Write edges to txt file
-	stringstream eFileName ;
-	eFileName << "../results/edges" << trialNum << ".txt" ;
-	
-	ofstream edgesFile ;
-	edgesFile.open(eFileName.str().c_str()) ;
-	
-	for (ULONG i = 0; i < edges.size(); i++)
-	{
-		edgesFile << edges[i][0] << "," << edges[i][1] << ","
-			<< edges[i][2] << "," << edges[i][3] << "\n" ;
-	}
-	edgesFile.close() ;
+//	stringstream eFileName ;
+//	eFileName << "../results/edges" << trialNum << ".txt" ;
+//	
+//	ofstream edgesFile ;
+//	edgesFile.open(eFileName.str().c_str()) ;
+//	
+//	for (ULONG i = 0; i < edges.size(); i++)
+//	{
+//		edgesFile << edges[i][0] << "," << edges[i][1] << ","
+//			<< edges[i][2] << "," << edges[i][3] << "\n" ;
+//	}
+//	edgesFile.close() ;
 	
 	return edges ;
 }
@@ -560,18 +560,18 @@ vector< vector<double> > Graph::RadiusConnect(vector< vector<double> > vertices,
 	edges.resize(k) ;
 	
 	// Write edges to txt file
-	stringstream eFileName ;
-	eFileName << "../results/edges" << trialNum << ".txt" ;
-	
-	ofstream edgesFile ;
-	edgesFile.open(eFileName.str().c_str()) ;
-	
-	for (ULONG i = 0; i < edges.size(); i++)
-	{
-		edgesFile << edges[i][0] << "," << edges[i][1] << ","
-			<< edges[i][2] << "," << edges[i][3] << "\n" ;
-	}
-	edgesFile.close() ;
+//	stringstream eFileName ;
+//	eFileName << "../results/edges" << trialNum << ".txt" ;
+//	
+//	ofstream edgesFile ;
+//	edgesFile.open(eFileName.str().c_str()) ;
+//	
+//	for (ULONG i = 0; i < edges.size(); i++)
+//	{
+//		edgesFile << edges[i][0] << "," << edges[i][1] << ","
+//			<< edges[i][2] << "," << edges[i][3] << "\n" ;
+//	}
+//	edgesFile.close() ;
 	
 	return edges ;
 }
