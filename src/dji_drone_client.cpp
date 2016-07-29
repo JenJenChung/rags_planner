@@ -16,7 +16,21 @@ int main(int argc, char **argv)
   ROS_INFO_STREAM("Initialising DJI drone client");
   ros::NodeHandle nh;
   
+  DJIDrone* drone = new DJIDrone(nh);
   DroneClient djiClient(nh) ;
+  ros::Rate loop_rate(10);
+  while(drone->request_sdk_permission_control()){
+    loop_rate.sleep();
+  }
+  while (ros::ok())
+  {
+    djiClient.sendWaypointRequest(drone);
+
+    ros::spinOnce();
+    loop_rate.sleep();
+  }
+  drone->release_sdk_permission_control();
+  return 0;
   
 	ros::spin();
 	

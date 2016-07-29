@@ -2,24 +2,30 @@ class DroneClient
 {
   public:
     DroneClient(ros::NodeHandle) ;
-    ~DroneClient() {
-      delete drone ;
-    }
+    ~DroneClient() {}
+    
+    void sendWaypointRequest(DJIDrone *) ;
     
   private:
     ros::Subscriber subWaypoint ;
     void waypointCallback(const dji_sdk::Waypoint&) ;
-    DJIDrone* drone ;
+    dji_sdk::WaypointList cmdWPList ;
+    bool cmdWPReceived ;
 } ;
 
-DroneClient::DroneClient(ros::NodeHandle nh){
+DroneClient::DroneClient(ros::NodeHandle nh): cmdWPReceived(false) {
   subWaypoint = nh.subscribe("cmd_wp", 10, &DroneClient::waypointCallback, this) ;
-  drone = new DJIDrone(nh);
 }
 
 void DroneClient::waypointCallback(const dji_sdk::Waypoint& msg){
-  dji_sdk::WaypointList newWPList ;
-  newWPList.waypoint_list.push_back(msg) ;
-  
-  drone->waypoint_navigation_send_request(newWPList);
+  cmdWPList.waypoint_list.push_back(msg) ;
+  cmdWPReceived = true ;
+}
+
+void DroneClient::sendWaypointRequest(DJIDrone * drone){  
+  ROS_INFO("PREPARING WAYPOINT");
+  drone->waypoint_navigation_send_request(cmdWPList);
+  ROS_INFO("SENT WAYPOINT");
+  cmdWPList.waypoint_list.clear() ;
+  cmdWPReceived = false ;
 }
